@@ -11,14 +11,13 @@ rug(hdi); box()
 GMM = Mclust(hdi)
 summary(GMM)
 GMM$entropy = with(GMM, -rowSums(z * ifelse(z > 0, log(z), 0)))
-GMM$NEC = with(GMM, ifelse(G == 1, 0, sum(entropy)/(n * log(G))))
-GMM$NEC
+GMM$nce = with(GMM, ifelse(G == 1, 0, sum(entropy)/(n * log(G))))
+GMM$nce
 
 GMMB = MclustBounded(hdi, G = 1:5, lbound = 0, ubound = 1)
 summary(GMMB$BIC)
-GMMB$entropy = with(GMMB, -rowSums(z * ifelse(z > 0, log(z), 0)))
-GMMB$NEC = with(GMMB, ifelse(G == 1, 0, sum(entropy)/(n * log(G))))
-GMMB$NEC
+GMMB$nce = with(GMMB, ifelse(G == 1, 0, sum(entropy)/(n * log(G))))
+GMMB$nce
 
 plot(as.densityMclustBounded(GMMB), what = "density", data = hdi,
      breaks = seq(0, 1, by=0.05)+0.025, xlim = c(0,1))

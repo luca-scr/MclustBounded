@@ -11,29 +11,24 @@ summary(mclustICL(enzyme, modelNames = "V"))
 
 GMM = Mclust(enzyme, modelNames = "V")
 summary(GMM)
+GMM$entropy = with(GMM, -rowSums(z * ifelse(z > 0, log(z), 0)))
+GMM$nce = with(GMM, ifelse(G == 1, 0, sum(entropy)/(n * log(G))))
+GMM$nce
 
 plot(as.densityMclust(GMM), what = "density",
      data = enzyme, xlab = "enzyme", breaks = 21)
 rug(enzyme)
-
-GMM$entropy = with(GMM, -rowSums(z * ifelse(z > 0, log(z), 0)))
-GMM$NEC = with(GMM, ifelse(G == 1, 0, sum(entropy)/(n * log(G))))
-GMM$NEC
-
 
 GMMB = MclustBounded(enzyme, G = 1:5, modelNames = "V", lbound = 0, criterion = "BIC")
 summary(GMMB$BIC)
 GMMB = MclustBounded(enzyme, G = 1:5, modelNames = "V", lbound = 0, criterion = "ICL")
 summary(GMMB$ICL)
 summary(GMMB, parameters = TRUE)
+GMMB$nce
 
 plot(as.densityMclustBounded(GMMB), what = "density",
      data = enzyme, breaks = 21)
 rug(enzyme)
-
-GMMB$entropy = with(GMMB, -rowSums(z * ifelse(z > 0, log(z), 0)))
-GMMB$NEC = with(GMMB, ifelse(G == 1, 0, sum(entropy)/(n * log(G))))
-GMMB$NEC
 
 x0 = seq(min(xbreaks), max(xbreaks), length = 1001)
 cdens = predict(as.densityMclustBounded(GMMB), 
